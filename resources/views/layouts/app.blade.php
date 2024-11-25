@@ -4,13 +4,15 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>@yield('titulo', 'Minimercado')</title>
-    @vite('resources/css/app.css')
+    @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
 <body>
 <header>
     {{-- navbar --}}
-    @include('partials.navigation')
+{{--    @include('partials.navigation')--}}
+    @include('layouts.navbar')
 </header>
 <main>
     {{-- Título Cabecera --}}
@@ -30,9 +32,7 @@
     @yield('contenido')
 </main>
 <footer class="footer footer-center p-4 bg-base-300 text-base-content mt-12">
-    <div>
-        <p>Copyright © 2024 - MiniMercado</p>
-    </div>
+    @include('layouts.footer')
 </footer>
 </body>
 </html>

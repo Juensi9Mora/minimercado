@@ -1,44 +1,28 @@
 <?php
 
+use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\CategoriaController;
 use App\Http\Controllers\ProductoController;
 use App\Http\Controllers\AutenticaController;
 use App\Http\Controllers\PedidoController;
 
-/*
-|--------------------------------------------------------------------------
-| Web Routes
-|--------------------------------------------------------------------------
-|
-| Here is where you can register web routes for your application. These
-| routes are loaded by the RouteServiceProvider and all of them will
-| be assigned to the "web" middleware group. Make something great!
-|
-*/
+Route::view('/','inicio')->name('home');
 
-Route::view('/','inicio')->name('inicio');
+Route::get('/dashboard', function () {
+    return view('inicio');
+})->middleware(['auth', 'verified'])->name('dashboard');
 
-Route::resource('/categorias',CategoriaController::class);
-Route::resource('/productos',ProductoController::class);
-
-//Ruta de registro de usuarios
-route::view('/registro', 'autenticacion.registro')->name('registro');
-route::post('/registro', [AutenticaController::class, 'registro'])->name('registro.store');
-
-//Ruta de login de usuarios
-route::view('/login', 'autenticacion.login')->name('login');
-route::post('/login', [AutenticaController::class, 'login'])->name('login.store');
-
-//Ruta de logout del usuario
-route::post('/logout', [AutenticaController::class, 'logout'])->name('logout');
-
-//Ruta para editar el perfil de usuario
-Route::get('/perfil', [AutenticaController::class, 'perfil'])->name('perfil');
-Route::put('/perfil/{user}', [AutenticaController::class, 'perfilUpdate'])->name('perfil.update');
-
-//Ruta para cambiar la contraseña de usuario
-Route::put('/perfil/password/{user}', [AutenticaController::class, 'passwordUpdate'])->name('password.update');
-
-Route::resource('/pedidos', PedidoController::class)->except(['create']);
+Route::resource('/productos', ProductoController::class)->middleware('auth');
+Route::resource('/categorias',CategoriaController::class)->middleware('auth');
+Route::resource('/productos',ProductoController::class)->middleware('auth');
+Route::resource('/pedidos', PedidoController::class)->middleware('auth');
 Route::get('/pedidos/create/{producto}', [PedidoController::class, 'create'])->name('pedidos.create');
+
+Route::middleware('auth')->group(function () {
+    Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
+    Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
+    Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+});
+
+require __DIR__.'/auth.php';
